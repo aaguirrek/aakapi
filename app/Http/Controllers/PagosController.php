@@ -66,11 +66,6 @@ class PagosController extends Controller
     function get_all($name,Request $request=null){
         $data=[];
         $database = "mysql";
-        if($request->exists('domain')){
-            if($request->domain === "lyndaerp.frappe.technology"){
-                $database = "mikuarto";
-            }
-        }
         
         
         $data["docType"]= DB::connection($database)->table('tabDocType')->where('name',$name)->first();

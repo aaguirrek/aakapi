@@ -178,8 +178,8 @@ class PostApiController extends Controller
     }
 
     public function file_upload(Request $request){
-        $files = Storage::allFiles('public');
-        Storage::delete($files);
+        //$files = Storage::allFiles('public');
+        //Storage::delete($files);
         $mime_types = array(
 
             'txt' => 'text/plain',
@@ -242,12 +242,12 @@ class PostApiController extends Controller
         $t=$request->file('file')->getClientOriginalName();
         $content = $request->file('file')->get();
         
-        Storage::disk('public')->put($t, $content);
+        Storage::disk('public')->put($request->domain."/".$t, $content);
         $data = $request->except(['domain','cookie', 'file','method']);
         $curl=null;
         $minetype=Storage::disk('public')->put($t, $content);
         $ext = strtolower($request->file('file')->getClientOriginalExtension());
-        if (array_key_exists($ext, $mime_types)) {
+        /*if (array_key_exists($ext, $mime_types)) {
             $minetype = $mime_types[$ext];
         }
         if( $request->exists('cookie')){
@@ -267,12 +267,15 @@ class PostApiController extends Controller
             ->post();
         }
         $resp = json_decode($curl);
-        
-        if(is_object($resp) || is_array($resp) ){
-            return response()->json($resp, 200); 
-        }else{
+        */
+        $curl=[];
+        $curl["message"]=[
+            "file_url"=>env("APP_URL")."/storage"."/".$request->domain."/".$t,
+            "creation"=>$t,
+            "filename"=>$t
+        ];
             return $curl;
-        }
+        
     }
     
     public function storePatient(Request $request)
